@@ -40,9 +40,27 @@ function removeCommentNodesRecursively(node) {
     }
 }
 
-var content = Readability(sourceToDoc(source)).parse().content;
+var rd = Readability(sourceToDoc(source)).parse();
 
-writeFile(outputfile, content, err => {
+// remove file extension
+var fileroot = outputfile.split('.').slice(0, -1).join('.');
+
+var spl = rd.content.split("<body>");
+
+if (spl.length > 1) {
+    spl[1] = "<h1>" + rd.title + "</h1>\n"+spl[1];
+}
+
+var content = spl.join("<body>"); 
+
+writeFile(outputfile + ".html", content, err => {
+    if (err) {
+        console.error(err);
+    }
+    // file written successfully
+});
+
+writeFile(outputfile + ".txt", rd.title + "\n" + rd.textContent, err => {
     if (err) {
         console.error(err);
     }

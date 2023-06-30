@@ -4,6 +4,8 @@ The original package is available at https://github.com/mozilla/readability.
 
 An already compiled binary is available as a github release in this repository. You can also compile it yourself with the instructions below.
 
+It works but is not very pretty, which was the aim.
+
 # How to use
 
 ```
