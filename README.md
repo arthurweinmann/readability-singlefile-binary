@@ -2,17 +2,13 @@
 
 The original package is available at https://github.com/mozilla/readability.
 
-An already compiled binary is available as a github release in this repository. You can also compile it yourself with the instructions below.
+The cli executable tool from this repository strips away clutter like buttons, ads, background images, and videos. It outputs html and text great for reading or parsing (for a web crawler for example).
 
-It works but is not very pretty, which was the aim.
+# Binary Download and Installation
 
-# How to use
+For a quick start, you can download a pre-compiled binary available in the Releases section of this repository. It provides an effortless way to access the package without delving into the compilation process.
 
-```
-./readability --sourcefile index.html --outputfile very_readable.html
-```
-
-# Compile your own version
+# Compiling the Package
 
 Install Deno:
 
@@ -24,6 +20,12 @@ curl -fsSL https://deno.land/x/install/install.sh | sh
 Then run:
 ```
 deno compile --allow-read --unstable --allow-env --allow-net --output=readability readability.js
+```
+
+# How to use
+
+```
+./readability --sourcefile index.html --outputfile very_readable.html
 ```
 
 # License
