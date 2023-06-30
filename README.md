@@ -2,7 +2,7 @@
 
 The original package is available at https://github.com/mozilla/readability.
 
-{Soon available as a github release}
+An already compiled binary is available as a github release in this repository. You can also compile it yourself with the instructions below.
 
 # How to use
 
