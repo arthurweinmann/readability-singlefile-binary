@@ -45,7 +45,7 @@ var rd = Readability(sourceToDoc(source)).parse();
 // remove file extension
 var fileroot = outputfile.split('.').slice(0, -1).join('.');
 
-var content = rd.content.replace(`<div id="readability-page-1" class="page"><div>`, `<div id="readability-page-1" class="page"><div>\n` + rd.title); 
+var content = rd.content.replace(`<div id="readability-page-1" class="page"><div>`, `<div id="readability-page-1" class="page"><div>\n<h1>` + rd.title + `</h1>`); 
 
 writeFile(fileroot + ".html", content, err => {
     if (err) {
