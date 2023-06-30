@@ -19,7 +19,7 @@ curl -fsSL https://deno.land/x/install/install.sh | sh
 
 Then run:
 ```
-deno compile --allow-read --unstable --allow-env --allow-net --output=readability readability.js
+deno compile --allow-read --allow-write --allow-env --allow-net --unstable --output=readability readability.js
 ```
 
 # How to use
