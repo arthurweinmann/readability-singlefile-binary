@@ -18,17 +18,23 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.34.x
+          deno-version: v1.39.x
 
-      - name: Deno compile
+      - name: Deno compile CLI
         run: |
-          deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability readability.js
+          deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability_cli readability_cli.js
+
+      - name: Deno compile HTTP Server
+        run: |
+          deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability_httpserver readability_httpserver.js
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: readability
-          path: ./readability
+          path: |
+            ./readability_cli
+            ./readability_httpserver
 
   release:
     needs: build
@@ -48,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{  github.ref_name }}-${{ steps.date.outputs.date }}
         run: |
-          gh release create "$tag" readability \
+          gh release create "$tag" readability_cli readability_httpserver \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
               --generate-notes
