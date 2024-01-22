@@ -19,13 +19,24 @@ curl -fsSL https://deno.land/x/install/install.sh | sh
 
 Then run:
 ```
-deno compile --allow-read --allow-write --allow-env --allow-net --unstable --output=readability readability.js
+deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability_cli readability_cli.js
+deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability_httpserver readability_httpserver.js
 ```
 
 # How to use
 
+## HTTP Server
+
 ```
-./readability --sourcefile index.html --outputfile very_readable.html
+./readability_httpserver --homedir /path/to/home/directory --listenon "127.0.0.1" --port 8080
+```
+
+Then `curl -X POST "/path/to/home/directory/path/to/html/file/to/make/more/readable.html"`, readability_httpserver will write `/path/to/home/directory/path/to/html/file/to/make/more/readable.readable.html` and `/path/to/home/directory/path/to/html/file/to/make/more/readable.readable.txt` in the same location.
+
+## CLI
+
+```
+./readability_cli --sourcefile index.html --outputfile very_readable.html
 ```
 
 # License
