@@ -2,8 +2,8 @@ name: Readability build and Release
 
 on:  
   push:
-    tags:
-      - '*'
+    branch:
+      - main
 
 permissions:
   contents: write
@@ -28,33 +28,16 @@ jobs:
         run: |
           deno compile --unstable --allow-read --allow-write --allow-net --allow-env --output=readability_httpserver readability_httpserver.js
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: readability
-          path: |
-            ./readability_cli
-            ./readability_httpserver
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: readability
-
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+        run: echo "date=$(date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_OUTPUT
 
-      - name: Create release
+      - name: Create or Update release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{  github.ref_name }}-${{ steps.date.outputs.date }}
         run: |
-          gh release create "$tag" readability_cli readability_httpserver \
+          gh release delete latest-release --yes || true
+          gh release create latest-release readability_httpserver readability_cli \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
+              --title="${GITHUB_REPOSITORY#*/} latest release" \
+              --notes "Generated on ${{ steps.date.outputs.date }}"
