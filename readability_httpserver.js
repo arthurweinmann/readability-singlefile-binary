@@ -20,7 +20,14 @@ Deno.serve({ port: nport, hostname: listenon }, (_req, _info) => {
 
     const filelocation = join(homedir, pathname);
 
-    let source = readFile(filelocation);
+    let source;
+    try {
+        source = readFile(filelocation);
+    } catch(e) {
+        return new Response("404: file not found: " + e, {
+            status: 404,
+        });
+    }
     let rd = Readability(sourceToDoc(source)).parse();
 
     let content = rd.content.replace(`<div id="readability-page-1" class="page"><div>`, `<div id="readability-page-1" class="page"><div>\n<h1>` + rd.title + `</h1>`);
