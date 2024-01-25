@@ -23,9 +23,6 @@ Deno.serve({ port: nport, hostname: listenon }, (_req, _info) => {
     let source = readFile(filelocation);
     let rd = Readability(sourceToDoc(source)).parse();
 
-    // remove file extension
-    const fileroot = filelocation.split('.').slice(0, -1).join('.');
-
     let content = rd.content.replace(`<div id="readability-page-1" class="page"><div>`, `<div id="readability-page-1" class="page"><div>\n<h1>` + rd.title + `</h1>`);
 
     let p = new Promise((resolve, reject) => {
@@ -52,8 +49,8 @@ Deno.serve({ port: nport, hostname: listenon }, (_req, _info) => {
                 return;
             }
         };
-        writeFile(fileroot + ".readable.html", content, cb);
-        writeFile(fileroot + ".readable.txt", rd.title + "\n" + rd.textContent, cb);
+        writeFile(filelocation + ".readable.html", content, cb);
+        writeFile(filelocation + ".readable.txt", rd.title + "\n" + rd.textContent, cb);
     });
 
     return p;
