@@ -23,7 +23,7 @@ Deno.serve({ port: nport, hostname: listenon }, (_req, _info) => {
     let source;
     try {
         source = readFile(filelocation);
-    } catch(e) {
+    } catch (e) {
         return new Response("404: file not found: " + e, {
             status: 404,
         });
@@ -1393,7 +1393,7 @@ function Readability(doc, options) {
                         var parsed = JSON.parse(content);
                         if (
                             !parsed["@context"] ||
-                            !parsed["@context"].match(/^https?\:\/\/schema\.org$/)
+                            !parsed["@context"].match(/^https?\:\/\/schema\.org\/?$/)
                         ) {
                             return;
                         }
@@ -1458,6 +1458,9 @@ function Readability(doc, options) {
                         ) {
                             metadata.siteName = parsed.publisher.name.trim();
                         }
+                        if (typeof parsed.datePublished === "string") {
+                            metadata.datePublished = parsed.datePublished.trim();
+                        }
                         return;
                     } catch (err) {
                         thisssss.log(err.message);
@@ -1481,7 +1484,7 @@ function Readability(doc, options) {
             var metaElements = thisssss._doc.getElementsByTagName("meta");
 
             // property is a space-separated list of values
-            var propertyPattern = /\s*(dc|dcterm|og|twitter)\s*:\s*(author|creator|description|title|site_name)\s*/gi;
+            var propertyPattern = /\s*(article|dc|dcterm|og|twitter)\s*:\s*(author|creator|description|published_time|title|site_name)\s*/gi;
 
             // name is a single value
             var namePattern = /^\s*(?:(dc|dcterm|og|twitter|weibo:(article|webpage))\s*[\.:]\s*)?(author|creator|description|title|site_name)\s*$/i;
@@ -1552,12 +1555,17 @@ function Readability(doc, options) {
             metadata.siteName = jsonld.siteName ||
                 values["og:site_name"];
 
+            // get article published time
+            metadata.publishedTime = jsonld.datePublished ||
+                values["article:published_time"] || null;
+
             // in many sites the meta value is escaped with HTML entities,
             // so here we need to unescape it
             metadata.title = thisssss._unescapeHtmlEntities(metadata.title);
             metadata.byline = thisssss._unescapeHtmlEntities(metadata.byline);
             metadata.excerpt = thisssss._unescapeHtmlEntities(metadata.excerpt);
             metadata.siteName = thisssss._unescapeHtmlEntities(metadata.siteName);
+            metadata.publishedTime = this._unescapeHtmlEntities(metadata.publishedTime);
 
             return metadata;
         },
@@ -2236,6 +2244,7 @@ function Readability(doc, options) {
         _isProbablyVisible: function (node) {
             // Have to null-check node.style and node.className.indexOf to deal with SVG and MathML nodes.
             return (!node.style || node.style.display != "none")
+                && (!node.style || node.style.visibility != "hidden")
                 && !node.hasAttribute("hidden")
                 //check for "fallback-image" so that wikimedia math images are displayed
                 && (!node.hasAttribute("aria-hidden") || node.getAttribute("aria-hidden") != "true" || (node.className && node.className.indexOf && node.className.indexOf("fallback-image") !== -1));
@@ -2304,7 +2313,8 @@ function Readability(doc, options) {
                 textContent: textContent,
                 length: textContent.length,
                 excerpt: metadata.excerpt,
-                siteName: metadata.siteName || thisssss._articleSiteName
+                siteName: metadata.siteName || thisssss._articleSiteName,
+                publishedTime: metadata.publishedTime
             };
         }
     };
